@@ -1,17 +1,23 @@
 package tw.edu.pu.gesture
 
 import android.graphics.Color
+import android.graphics.Rect
 import android.graphics.Typeface
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.GestureDetector
 import android.view.MotionEvent
+import android.view.View
+import android.view.View.OnTouchListener
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 
-class MainActivity : AppCompatActivity(),GestureDetector.OnGestureListener {
+class MainActivity : AppCompatActivity(),GestureDetector.OnGestureListener,OnTouchListener {
 
     lateinit var txv: TextView
+    lateinit var img1: ImageView
+    lateinit var img2: ImageView
     lateinit var gDetector: GestureDetector
     var count:Int = 0
 
@@ -31,6 +37,10 @@ class MainActivity : AppCompatActivity(),GestureDetector.OnGestureListener {
         txv.getBackground().setAlpha(50)  //0~255透明度值
 
         gDetector = GestureDetector(this, this)
+        img1 = findViewById(R.id.img1)
+        img2 = findViewById(R.id.img2)
+        img1.setOnTouchListener(this)
+        img2.setOnTouchListener(this)
     }
 
     override fun onDown(p0: MotionEvent): Boolean {
@@ -93,6 +103,29 @@ class MainActivity : AppCompatActivity(),GestureDetector.OnGestureListener {
         return true
 
     }
+    override fun onTouch(v: View?, event: MotionEvent?): Boolean {
 
+        if (v==img1){
+            txv.text = "精靈1"
+        }
+        else{
+            txv.text = "精靈2"
+        }
+        if (event?.action == MotionEvent.ACTION_MOVE){
+            v?.x = event.rawX- v!!.width/2
+            v?.y = event.rawY- v!!.height/2
+        }
+        var r1: Rect = Rect(img1.x.toInt(), img1.y.toInt(),
+            img1.x.toInt() + img1.width, img1.y.toInt() + img1.height)
+        var r2: Rect = Rect(img2.x.toInt(), img2.y.toInt(),
+            img2.x.toInt() + img2.width, img2.y.toInt() + img2.height)
+        if(r1.intersect(r2)) {
+            txv.text = "碰撞"
+        }
+        return true
+
+    }
 
 }
+
+
